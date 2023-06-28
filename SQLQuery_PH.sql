@@ -1,117 +1,117 @@
 USE PrintingHouse
 GO
--- 4. Запросы манипулирования данными
--- Вывести таблицу с кодом заказа, названием заказа, заказчиком, контактным номером
--- заказчика, добавить столбец ответственного менеджера
--- 4.1. Создать новую таблицу TestTable с помощью запроса на языке SQL SELECT … INTO…
+-- 4. Р—Р°РїСЂРѕСЃС‹ РјР°РЅРёРїСѓР»РёСЂРѕРІР°РЅРёСЏ РґР°РЅРЅС‹РјРё
+-- Р’С‹РІРµСЃС‚Рё С‚Р°Р±Р»РёС†Сѓ СЃ РєРѕРґРѕРј Р·Р°РєР°Р·Р°, РЅР°Р·РІР°РЅРёРµРј Р·Р°РєР°Р·Р°, Р·Р°РєР°Р·С‡РёРєРѕРј, РєРѕРЅС‚Р°РєС‚РЅС‹Рј РЅРѕРјРµСЂРѕРј
+-- Р·Р°РєР°Р·С‡РёРєР°, РґРѕР±Р°РІРёС‚СЊ СЃС‚РѕР»Р±РµС† РѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕРіРѕ РјРµРЅРµРґР¶РµСЂР°
+-- 4.1. РЎРѕР·РґР°С‚СЊ РЅРѕРІСѓСЋ С‚Р°Р±Р»РёС†Сѓ TestTable СЃ РїРѕРјРѕС‰СЊСЋ Р·Р°РїСЂРѕСЃР° РЅР° СЏР·С‹РєРµ SQL SELECT вЂ¦ INTOвЂ¦
 SELECT O.OrderID, O.ProductName, C.FullName, C.Phone INTO TestTable
 	FROM Orders O LEFT JOIN Customers C ON O.CustomerID = C.CustomerID;
 --
 SELECT * FROM TestTable
--- 4.2. Изменить структуру созданной таблицы, добавив в нее новый столбец
+-- 4.2. РР·РјРµРЅРёС‚СЊ СЃС‚СЂСѓРєС‚СѓСЂСѓ СЃРѕР·РґР°РЅРЅРѕР№ С‚Р°Р±Р»РёС†С‹, РґРѕР±Р°РІРёРІ РІ РЅРµРµ РЅРѕРІС‹Р№ СЃС‚РѕР»Р±РµС†
 ALTER TABLE TestTable 
 	ADD Manager nvarchar(50);
--- 4.3. Заполнить новое поле с помощью запроса на обновление данных на языке SQL
+-- 4.3. Р—Р°РїРѕР»РЅРёС‚СЊ РЅРѕРІРѕРµ РїРѕР»Рµ СЃ РїРѕРјРѕС‰СЊСЋ Р·Р°РїСЂРѕСЃР° РЅР° РѕР±РЅРѕРІР»РµРЅРёРµ РґР°РЅРЅС‹С… РЅР° СЏР·С‹РєРµ SQL
 UPDATE TestTable 
 	SET Manager = (SELECT FullName FROM Employees WHERE EmployeeID = 406);
--- 4.4. Обновить значения в поле с помощью запроса с учетом определенного условия
+-- 4.4. РћР±РЅРѕРІРёС‚СЊ Р·РЅР°С‡РµРЅРёСЏ РІ РїРѕР»Рµ СЃ РїРѕРјРѕС‰СЊСЋ Р·Р°РїСЂРѕСЃР° СЃ СѓС‡РµС‚РѕРј РѕРїСЂРµРґРµР»РµРЅРЅРѕРіРѕ СѓСЃР»РѕРІРёСЏ
 UPDATE TestTable 
 	SET Manager = (SELECT FullName FROM Employees WHERE EmployeeID = 405)
-		WHERE ProductName LIKE 'Визитки';
--- 4.5. Создать запрос на языке SQL на добавление в таблицу TestTable новых записей
+		WHERE ProductName LIKE 'Р’РёР·РёС‚РєРё';
+-- 4.5. РЎРѕР·РґР°С‚СЊ Р·Р°РїСЂРѕСЃ РЅР° СЏР·С‹РєРµ SQL РЅР° РґРѕР±Р°РІР»РµРЅРёРµ РІ С‚Р°Р±Р»РёС†Сѓ TestTable РЅРѕРІС‹С… Р·Р°РїРёСЃРµР№
 INSERT INTO TestTable
-	VALUES (201, 'Журнал', 'Лесной Игорь', '+375 29 526-48-96', NULL);
+	VALUES (201, 'Р–СѓСЂРЅР°Р»', 'Р›РµСЃРЅРѕР№ РРіРѕСЂСЊ', '+375 29 526-48-96', NULL);
 INSERT INTO TestTable (OrderID, ProductName, FullName, Phone)
-	VALUES (209, 'Плакат', 'Оленина Лена', '+375 29 145-25-12');
+	VALUES (209, 'РџР»Р°РєР°С‚', 'РћР»РµРЅРёРЅР° Р›РµРЅР°', '+375 29 145-25-12');
 INSERT INTO TestTable
-	VALUES (211, 'Пакеты', 'Лось Виталий', NULL, 
+	VALUES (211, 'РџР°РєРµС‚С‹', 'Р›РѕСЃСЊ Р’РёС‚Р°Р»РёР№', NULL, 
 		(SELECT FullName FROM Employees WHERE EmployeeID = 402));
 -- 
 SELECT * FROM TestTable
 	ORDER BY OrderID
--- 4.6. Составить запрос на удаление записей из созданной таблицы
+-- 4.6. РЎРѕСЃС‚Р°РІРёС‚СЊ Р·Р°РїСЂРѕСЃ РЅР° СѓРґР°Р»РµРЅРёРµ Р·Р°РїРёСЃРµР№ РёР· СЃРѕР·РґР°РЅРЅРѕР№ С‚Р°Р±Р»РёС†С‹
 DELETE FROM TestTable
 	WHERE OrderID < 205;
 -- 
 SELECT * FROM TestTable
 	ORDER BY OrderID
--- 4.7. Удалить таблицу TestTable
+-- 4.7. РЈРґР°Р»РёС‚СЊ С‚Р°Р±Р»РёС†Сѓ TestTable
 DROP TABLE TestTable;
 GO
 
--- 5. Запросы на выборку данных
--- 5.1. Запрос на вывод оборудование, которое установлено после 2017 года
+-- 5. Р—Р°РїСЂРѕСЃС‹ РЅР° РІС‹Р±РѕСЂРєСѓ РґР°РЅРЅС‹С…
+-- 5.1. Р—Р°РїСЂРѕСЃ РЅР° РІС‹РІРѕРґ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ, РєРѕС‚РѕСЂРѕРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅРѕ РїРѕСЃР»Рµ 2017 РіРѕРґР°
 SELECT * FROM Equipment
 	WHERE RegistrationYear > 2017;
--- 5.2. Запрос на вывод ФИО и должности рабочих, которые работают на производстве
+-- 5.2. Р—Р°РїСЂРѕСЃ РЅР° РІС‹РІРѕРґ Р¤РРћ Рё РґРѕР»Р¶РЅРѕСЃС‚Рё СЂР°Р±РѕС‡РёС…, РєРѕС‚РѕСЂС‹Рµ СЂР°Р±РѕС‚Р°СЋС‚ РЅР° РїСЂРѕРёР·РІРѕРґСЃС‚РІРµ
 SELECT FullName, Position FROM Employees
 	WHERE (Cabinet = 01 OR Cabinet = 02 OR Cabinet = 03) 
 		   AND WorkingHours = '7-7, 2/2';
--- 5.3, 5.4. Запрос на подсчет количества выполненных операций каждым работником 
--- производства с выводом их ФИО
+-- 5.3, 5.4. Р—Р°РїСЂРѕСЃ РЅР° РїРѕРґСЃС‡РµС‚ РєРѕР»РёС‡РµСЃС‚РІР° РІС‹РїРѕР»РЅРµРЅРЅС‹С… РѕРїРµСЂР°С†РёР№ РєР°Р¶РґС‹Рј СЂР°Р±РѕС‚РЅРёРєРѕРј 
+-- РїСЂРѕРёР·РІРѕРґСЃС‚РІР° СЃ РІС‹РІРѕРґРѕРј РёС… Р¤РРћ
 SELECT OC.EmployeeID, E.FullName, COUNT(OC.Operation) AS NumOperations 
 	FROM OperationalCard OC LEFT JOIN Employees E ON OC.EmployeeID = E.EmployeeID
 		GROUP BY OC.EmployeeID, E.FullName;
--- 5.5. Запрос на расход имеющихся видов бумаги (сгруппировать по г/м2) за март 2023
+-- 5.5. Р—Р°РїСЂРѕСЃ РЅР° СЂР°СЃС…РѕРґ РёРјРµСЋС‰РёС…СЃСЏ РІРёРґРѕРІ Р±СѓРјР°РіРё (СЃРіСЂСѓРїРїРёСЂРѕРІР°С‚СЊ РїРѕ Рі/Рј2) Р·Р° РјР°СЂС‚ 2023
 SELECT M.Thickness, SUM(MC.Consumption) AS Consump
 	FROM Materials M 
 	LEFT JOIN MaterialsConsumption MC ON M.MaterialID = MC.MaterialID
 	LEFT JOIN Orders O ON MC.OrderID = O.OrderID
-		WHERE M.Title LIKE 'Бумага' 
+		WHERE M.Title LIKE 'Р‘СѓРјР°РіР°' 
 		AND O.EndDate BETWEEN '01.05.2023' AND '31.05.2023'
 			GROUP BY M.Thickness
 				ORDER BY M.Thickness DESC;
--- 5.6. Запрос на вывод таблицы заказов с ФИО заказчика
+-- 5.6. Р—Р°РїСЂРѕСЃ РЅР° РІС‹РІРѕРґ С‚Р°Р±Р»РёС†С‹ Р·Р°РєР°Р·РѕРІ СЃ Р¤РРћ Р·Р°РєР°Р·С‡РёРєР°
 SELECT O.OrderID, O.ProductName, O.Amount, O.Price, O.StartDate, O.EndDate, C.FullName 
 	FROM Orders O LEFT JOIN Customers C ON O.CustomerID = C.CustomerID
 		ORDER BY ProductName, Amount DESC; 
--- 5.7. Запрос на вывод таблицы заказов с ФИО заказчика и вычисляемым количеством дней на изготовление
+-- 5.7. Р—Р°РїСЂРѕСЃ РЅР° РІС‹РІРѕРґ С‚Р°Р±Р»РёС†С‹ Р·Р°РєР°Р·РѕРІ СЃ Р¤РРћ Р·Р°РєР°Р·С‡РёРєР° Рё РІС‹С‡РёСЃР»СЏРµРјС‹Рј РєРѕР»РёС‡РµСЃС‚РІРѕРј РґРЅРµР№ РЅР° РёР·РіРѕС‚РѕРІР»РµРЅРёРµ
 SELECT O.OrderID, O.ProductName, O.Amount, O.Price, O.StartDate, O.EndDate, C.FullName,
 	DATEDIFF (dd, O.StartDate, O.EndDate) AS NumDays 
 	FROM Orders O LEFT JOIN Customers C ON O.CustomerID = C.CustomerID
 		ORDER BY ProductName, Amount DESC;
--- 5.8. Запрос на вывод всех персональных данных (ФИО, должность, телефон), имеющихся в базе данных
+-- 5.8. Р—Р°РїСЂРѕСЃ РЅР° РІС‹РІРѕРґ РІСЃРµС… РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹С… РґР°РЅРЅС‹С… (Р¤РРћ, РґРѕР»Р¶РЅРѕСЃС‚СЊ, С‚РµР»РµС„РѕРЅ), РёРјРµСЋС‰РёС…СЃСЏ РІ Р±Р°Р·Рµ РґР°РЅРЅС‹С…
 SELECT FullName, Position, Phone FROM Employees
 UNION
 SELECT FullName, Position, Phone FROM Customers
--- 5.9. Запрос на вывод поставщиков, которые поставляют и оборудование, и материалы
+-- 5.9. Р—Р°РїСЂРѕСЃ РЅР° РІС‹РІРѕРґ РїРѕСЃС‚Р°РІС‰РёРєРѕРІ, РєРѕС‚РѕСЂС‹Рµ РїРѕСЃС‚Р°РІР»СЏСЋС‚ Рё РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ, Рё РјР°С‚РµСЂРёР°Р»С‹
 SELECT [Provider] FROM Materials
 INTERSECT
 SELECT [Provider] FROM Equipment
--- 5.10, 5.11. Запрос на вывод количества листов, которое было напечатано на печатной машине Xerox
+-- 5.10, 5.11. Р—Р°РїСЂРѕСЃ РЅР° РІС‹РІРѕРґ РєРѕР»РёС‡РµСЃС‚РІР° Р»РёСЃС‚РѕРІ, РєРѕС‚РѕСЂРѕРµ Р±С‹Р»Рѕ РЅР°РїРµС‡Р°С‚Р°РЅРѕ РЅР° РїРµС‡Р°С‚РЅРѕР№ РјР°С€РёРЅРµ Xerox
 SELECT MC.Consumption 
 	FROM MaterialsConsumption MC RIGHT JOIN OperationalCard OC
 	ON MC.OrderID = OC.OrderID AND MC.Operation = OC.Operation
 		WHERE OC.EquipmentID = (SELECT EquipmentID FROM Equipment WHERE Brand LIKE '%Xerox%')
-		AND MC.MaterialID IN (SELECT MaterialID FROM Materials WHERE Title LIKE 'Бумага')
+		AND MC.MaterialID IN (SELECT MaterialID FROM Materials WHERE Title LIKE 'Р‘СѓРјР°РіР°')
 			GROUP BY Consumption;
 GO
 
--- 6. Вывести заказы, где использована пленка (выполнялось ламинирование)
+-- 6. Р’С‹РІРµСЃС‚Рё Р·Р°РєР°Р·С‹, РіРґРµ РёСЃРїРѕР»СЊР·РѕРІР°РЅР° РїР»РµРЅРєР° (РІС‹РїРѕР»РЅСЏР»РѕСЃСЊ Р»Р°РјРёРЅРёСЂРѕРІР°РЅРёРµ)
 CREATE OR ALTER VIEW LaminatedProducts
 AS
 SELECT O.OrderID, O.ProductName, O.Amount 
 	FROM Orders O JOIN OperationalCard OC ON O.OrderID = OC.OrderID
-		WHERE OC.Operation LIKE '%Ламин%';
+		WHERE OC.Operation LIKE '%Р›Р°РјРёРЅ%';
 GO
 SELECT * FROM dbo.LaminatedProducts;
 GO
 
---6. (5.5) Вывести расход имеющихся видов бумаги (сгруппировать по г/м2) за март 2023
+--6. (5.5) Р’С‹РІРµСЃС‚Рё СЂР°СЃС…РѕРґ РёРјРµСЋС‰РёС…СЃСЏ РІРёРґРѕРІ Р±СѓРјР°РіРё (СЃРіСЂСѓРїРїРёСЂРѕРІР°С‚СЊ РїРѕ Рі/Рј2) Р·Р° РјР°СЂС‚ 2023
 CREATE OR ALTER VIEW PaperConsumption
 AS
 SELECT M.Thickness, SUM(MC.Consumption) AS Consump
 	FROM Materials M 
 	LEFT JOIN MaterialsConsumption MC ON M.MaterialID = MC.MaterialID
 	LEFT JOIN Orders O ON MC.OrderID = O.OrderID
-		WHERE M.Title LIKE 'Бумага' 
+		WHERE M.Title LIKE 'Р‘СѓРјР°РіР°' 
 		AND O.EndDate BETWEEN '01.05.2023' AND '31.05.2023'
 			GROUP BY M.Thickness;
 GO
 SELECT * FROM dbo.PaperConsumption;
 GO
 
--- 7.1. Процедура вывода количества произведенной продукции за период времени
+-- 7.1. РџСЂРѕС†РµРґСѓСЂР° РІС‹РІРѕРґР° РєРѕР»РёС‡РµСЃС‚РІР° РїСЂРѕРёР·РІРµРґРµРЅРЅРѕР№ РїСЂРѕРґСѓРєС†РёРё Р·Р° РїРµСЂРёРѕРґ РІСЂРµРјРµРЅРё
 CREATE OR ALTER PROC pr_ProdusedONPeriod
 @BeginPeriod date,
 @EndPeriod date,
@@ -121,13 +121,13 @@ SELECT @ProductsAmount = SUM(Amount)
 	FROM Orders
 		WHERE EndDate BETWEEN @BeginPeriod AND @EndPeriod;
 GO
--- Просмотр через процедуру количества произведенной продукции за март
+-- РџСЂРѕСЃРјРѕС‚СЂ С‡РµСЂРµР· РїСЂРѕС†РµРґСѓСЂСѓ РєРѕР»РёС‡РµСЃС‚РІР° РїСЂРѕРёР·РІРµРґРµРЅРЅРѕР№ РїСЂРѕРґСѓРєС†РёРё Р·Р° РјР°СЂС‚
 DECLARE @ProdAmount int;
 EXEC pr_ProdusedONPeriod '01.05.2023', '31.05.2023', @ProdAmount OUTPUT;
 SELECT @ProdAmount;
 GO
 
--- 7.2. Функция для вывода стоимости материалов для одного заказа
+-- 7.2. Р¤СѓРЅРєС†РёСЏ РґР»СЏ РІС‹РІРѕРґР° СЃС‚РѕРёРјРѕСЃС‚Рё РјР°С‚РµСЂРёР°Р»РѕРІ РґР»СЏ РѕРґРЅРѕРіРѕ Р·Р°РєР°Р·Р°
 CREATE OR ALTER FUNCTION fn_MaterialsCost
 (@OrderID int)
 RETURNS money
@@ -145,7 +145,7 @@ GO
 SELECT dbo.fn_MaterialsCost(205) AS MaterialsCost;
 GO
 
--- 7.3. Создать триггер для проверки вводимого e-mail
+-- 7.3. РЎРѕР·РґР°С‚СЊ С‚СЂРёРіРіРµСЂ РґР»СЏ РїСЂРѕРІРµСЂРєРё РІРІРѕРґРёРјРѕРіРѕ e-mail
 CREATE OR ALTER TRIGGER CheckEmail
 ON Customers
 FOR INSERT
@@ -155,23 +155,23 @@ DECLARE @Email nvarchar(50);
 	SELECT @Email = Email FROM inserted;;
 	IF (@Email NOT LIKE '%@%')
 	BEGIN
-			PRINT 'e-mail должен содержать @';
+			PRINT 'e-mail РґРѕР»Р¶РµРЅ СЃРѕРґРµСЂР¶Р°С‚СЊ @';
 			ROLLBACK TRAN
 	END
 END
 GO
--- Проверка триггера
+-- РџСЂРѕРІРµСЂРєР° С‚СЂРёРіРіРµСЂР°
 INSERT Customers (FullName, Position, Company, Phone, Email) VALUES ('abc', 'abc', 'abc', 'abc', 'abc');
 SELECT * FROM Customers;
 GO
 
--- 7.4. Триггер для таблицы Materials, срабатывающий при любом изменении 
--- цены материала и корректирующий в таблице MaterialsConsumption себестоимость
--- 1) новый столбец для работы триггера
+-- 7.4. РўСЂРёРіРіРµСЂ РґР»СЏ С‚Р°Р±Р»РёС†С‹ Materials, СЃСЂР°Р±Р°С‚С‹РІР°СЋС‰РёР№ РїСЂРё Р»СЋР±РѕРј РёР·РјРµРЅРµРЅРёРё 
+-- С†РµРЅС‹ РјР°С‚РµСЂРёР°Р»Р° Рё РєРѕСЂСЂРµРєС‚РёСЂСѓСЋС‰РёР№ РІ С‚Р°Р±Р»РёС†Рµ MaterialsConsumption СЃРµР±РµСЃС‚РѕРёРјРѕСЃС‚СЊ
+-- 1) РЅРѕРІС‹Р№ СЃС‚РѕР»Р±РµС† РґР»СЏ СЂР°Р±РѕС‚С‹ С‚СЂРёРіРіРµСЂР°
 ALTER TABLE MaterialsConsumption ADD MaterialCost MONEY
 SELECT * FROM MaterialsConsumption;
 GO
--- 2) триггер
+-- 2) С‚СЂРёРіРіРµСЂ
 CREATE OR ALTER TRIGGER ChangeMaterialPrice
 ON Materials
 	FOR UPDATE AS 
@@ -184,12 +184,12 @@ UPDATE MaterialsConsumption SET MaterialCost = @Price * Consumption
 	WHERE MaterialID = @MaterialCode;
 END
 GO
--- 3) проверка триггера
+-- 3) РїСЂРѕРІРµСЂРєР° С‚СЂРёРіРіРµСЂР°
 UPDATE Materials SET Price *= 1.05
-	WHERE MaterialID = 509 -- для скоб
+	WHERE MaterialID = 509 -- РґР»СЏ СЃРєРѕР±
 SELECT * FROM MaterialsConsumption;
 GO
--- 4) добавление курсора
+-- 4) РґРѕР±Р°РІР»РµРЅРёРµ РєСѓСЂСЃРѕСЂР°
 ALTER TRIGGER ChangeMaterialPrice
 ON Materials
 	FOR UPDATE AS 
@@ -215,10 +215,10 @@ CLOSE PriceCursor;
 DEALLOCATE PriceCursor;
 END
 GO
--- 5) проверка триггера с курсором
+-- 5) РїСЂРѕРІРµСЂРєР° С‚СЂРёРіРіРµСЂР° СЃ РєСѓСЂСЃРѕСЂРѕРј
 UPDATE Materials SET Price *= 1.05
-	WHERE MaterialID IN (505, 506); -- для тонера
+	WHERE MaterialID IN (505, 506); -- РґР»СЏ С‚РѕРЅРµСЂР°
 SELECT * FROM MaterialsConsumption;
--- 6) удалить добавленный вначале столбец для триггера
+-- 6) СѓРґР°Р»РёС‚СЊ РґРѕР±Р°РІР»РµРЅРЅС‹Р№ РІРЅР°С‡Р°Р»Рµ СЃС‚РѕР»Р±РµС† РґР»СЏ С‚СЂРёРіРіРµСЂР°
 ALTER TABLE MaterialsConsumption DROP COLUMN MaterialCost;
 SELECT * FROM MaterialsConsumption;
